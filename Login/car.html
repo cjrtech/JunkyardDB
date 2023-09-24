@@ -1,129 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Database Display and Entry</title>
   <style>
-
-    input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus {
-    outline: none;
-    border-color: #999;
-    }
-    h2 {
-        width: 100%;
-        text-align:center;
+    /* Reset some default styles */
+    body, h1, h2, ul {
+      margin: 0;
+      padding: 0;
     }
 
+    /* Center text elements */
+    h1, h2 {
+      text-align: center;
+    }
+
+    /* Style the header */
     h1 {
-        width: 100%;
-        text-align:center;
+      background-color: #333;
+      color: white;
+      padding: 10px 0;
     }
+
+    /* Style the navigation bar */
+    nav {
+      background-color: #333;
+      color: white;
+      text-align: center;
+    }
+
+    .Links {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .Links li {
+      margin: 0;
+      padding: 0;
+    }
+
+    .Links li a {
+      display: block;
+      padding: 10px 20px;
+      color: white;
+      text-decoration: none;
+    }
+
+    .Links li a:hover {
+      background-color: #555;
+    }
+
+    /* Style the table */
     table {
-        width: 1300px;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
     }
-    td, th {
-        width: 250px;
-        padding: 10px;
-        border: 1px solid #ccc;
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
     }
 
     th {
-        background-color: #333;
-        color: #fff;
-    }
-
-    tr:nth-child(odd) {
-        background-color: #eee;
+      background-color: #333;
+      color: white;
     }
 
     tr:nth-child(even) {
-        background-color: #fff;
+      background-color: #f2f2f2;
     }
-    button {
-    display: inline-block;
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    cursor: pointer;
-    width: 50%;
-    }
-    * {
-    padding: 0;
-    margin: 0;
-}
 
-* {box-sizing: border-box;}
-body {font-family: Verdana, sans-serif;}
-.mySlides {display: none;}
-img {vertical-align: middle;}
-
-    .Links li {
-    
-    float: left;
-    width: 153px;
-    border-right: 1px solid #FFF;
-    font-weight: bold;
-    font-size: .7em;
-    text-align: center;
-    list-style: none;
-    }
-    .Links li:last-child {
-    width: 132px;
-    border-right-width: 0;
-   
-    }
-   
-    .Links li a {
-    display: block;
-    height: 25px;
-    line-height: 25px;
-    background-color: rgb(0, 63, 105);
-    color: #FFF;
-    text-decoration: none;
+    /* Style the AJAX loader */
+    .loader {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
   <h1>Database Display and Entry</h1>
+  <nav>
+    <ul class="Links">
+      <li><a href="listings.html">Listing</a></li>
+      <li><a href="parts.html">Parts</a></li>
+      <li><a href="car.html">Car</a></li>
+      <li><a href="engine.html">Engine</a></li>
+      <li><a href="Login.html">Login</a></li>
+      <li><a href="http://localhost/phpmyadmin/index.php?route=/sql&server=1&db=junkyard&table=car&pos=0">ENTER DATA</a></li>
+    </ul>
+  </nav>
+
+  <h2>Enter Data into the Database</h2>
+  
+  <div class="loader">
+    Loading data...
+  </div>
+
+  <table id="data-table">
+    <!-- Table data will be added dynamically -->
+  </table>
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script>
-    $.ajax({
-      url: "car2.php",
-      dataType: "json",
-      success: function(data) {
-        var table = "<table>";
-        for (var i = 0; i < data.length; i++) {
-          table += "<tr>";
-          for (var key in data[i]) {
-            table += "<td>" + data[i][key] + "</td>";
+    $(document).ready(function() {
+      $(".loader").show();
+      $.ajax({
+        url: "car2.php",
+        dataType: "json",
+        success: function(data) {
+          $(".loader").hide();
+          var table = "<thead><tr>";
+          for (var key in data[0]) {
+            table += "<th>" + key + "</th>";
           }
-          table += "</tr>";
+          table += "</tr></thead><tbody>";
+          for (var i = 0; i < data.length; i++) {
+            table += "<tr>";
+            for (var key in data[i]) {
+              table += "<td>" + data[i][key] + "</td>";
+            }
+            table += "</tr>";
+          }
+          table += "</tbody>";
+          $("#data-table").append(table);
         }
-        table += "</table>";
-        $("body").append(table);
-      }
+      });
     });
   </script>
-  <h2>Enter Data into the Database</h2>
-  <nav onmouseout="hide()">
-    <ul class="Links">
-        <li><a href="listings.html" onmouseover="show('m1')">Listing</a></li>
-        <li><a href="parts.html" onmouseover="show('m2')">Parts</a></li>
-        <li><a href="car.html" onmouseover="show('m3')">Car</a></li>
-    <li>
-        <a href="engine.html" onmouseover="show('m4')">Engine</a>
-    </li>
-    <li>
-        <a href="Login.html" onmouseover="show('m5')">Login</a>
-    </li>
-    <li>
-    <a href="http://localhost/phpmyadmin/index.php?route=/sql&server=1&db=junkyard&table=car&pos=0" onmouseover="show('m5')">ENTER DATA</a>
-    </li>
-    </ul>
-</nav>
 </body>
 </html>
